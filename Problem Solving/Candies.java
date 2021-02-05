@@ -8,39 +8,37 @@ import java.util.regex.*;
 
 public class Solution {
 
-    //9 9 8 7 7 6 6 5 4 3 -> 19
-    //10 9 2 3 6 5 4 3 2 2 2 -> 22
-
     // Complete the candies function below.
-    static long candies(int n, long[] arr) {
-        int size = arr.length;
-        int[] cand = new int[size];
-        cand[0] = 1;
+    static long candies(int n, int[] arr) {
+        long sum = 1;
+        int last = 1;
+        int[] count = new int[arr.length];
+        count[0]=1;             
 
-        for(int i = 1; i < size; i++)
-        {
-            if(arr[i] > arr[i-1])
-            {
-                cand[i] = cand[i-1]+1;
+        for(int i=1;i<n;i++) {            
+            if(arr[i]>arr[i-1]) {
+                last = last+1;
+                count[i] = last;
             } else {
-                cand[i] = 1;
+                last = 1;
+                count[i] = last;
             }
         }
         
-        for(int i = size-2; i >= 0; i--)
-        {
-            if(arr[i] > arr[i+1])
-            {
-                cand[i] = Math.max(cand[i], cand[i+1]+1);
-            }        
+        last = 1;
+        count[n-1] = Math.max(1, count[n-1]);
+        sum = count[n-1];
+        for(int i=n-1;i>0;i--) {            
+            if(arr[i-1]>arr[i]) {
+                last = last+1;
+                if(count[i-1]<last) count[i-1] = last;
+            } else {
+                last = 1;
+                if(count[i]<last) count[i-1] = last;
+            }
+            sum = sum + count[i-1];
         }
-
-        int count = 0;
-        for(int i = 0; i < size; i++)
-        {
-            count = count + cand[i];
-        }
-        return count;
+        return sum;
     }
 
     private static final Scanner scanner = new Scanner(System.in);
@@ -51,7 +49,7 @@ public class Solution {
         int n = scanner.nextInt();
         scanner.skip("(\r\n|[\n\r\u2028\u2029\u0085])?");
 
-        long[] arr = new long[n];
+        int[] arr = new int[n];
 
         for (int i = 0; i < n; i++) {
             int arrItem = scanner.nextInt();
